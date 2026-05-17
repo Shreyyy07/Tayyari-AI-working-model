@@ -58,9 +58,10 @@ const uuid = () =>
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2);
 
-const API_URL =
+// Base URL for the backend — do NOT include a trailing path here
+const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ||
-  '/api/process-content';
+  'http://localhost:5000';
 
 // ----------------------
 // UI Notification System
@@ -460,7 +461,7 @@ export default function ElegantChat() {
     fetchAbortRef.current = controller;
 
     try {
-      const response = await fetch(`${API_URL}/process-content`, {
+      const response = await fetch(`${BACKEND_URL}/process-content`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: input, files: [] }),
@@ -1189,10 +1190,10 @@ export default function ElegantChat() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder={mode === 'quiz' ? 'Ask a topic to quiz on…' : 'Ask anything...'}
-                    className={`w-full pl-14 pr-14 py-3.5 border rounded-xl shadow-sm resize-none focus:outline-none focus:ring-2 transition-all placeholder-slate-400 text-base ${
+                    className={`w-full pl-14 pr-14 py-3.5 border rounded-xl shadow-sm resize-none focus:outline-none focus:ring-2 transition-all text-slate-900 text-base ${
                       mode === 'quiz'
-                        ? 'bg-white border-violet-300 focus:ring-violet-500 focus:border-violet-500'
-                        : 'bg-white border-slate-300 focus:ring-blue-500 focus:border-blue-500'
+                        ? 'bg-white border-violet-300 focus:ring-violet-500 focus:border-violet-500 placeholder-violet-400'
+                        : 'bg-white border-slate-300 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500'
                     }`}
                     rows={1}
                     maxLength={8000}

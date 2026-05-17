@@ -60,19 +60,22 @@ export default function EnhancedLeaderboard() {
   const [timeFilter, setTimeFilter] = useState<'weekly' | 'monthly' | 'alltime'>('alltime');
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<'points' | 'quizzes' | 'streak'>('points');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isLive, setIsLive] = useState(false);
 
   // Fetch leaderboard data from API
   useEffect(() => {
     fetchLeaderboardData();
-    const interval = setInterval(fetchLeaderboardData, 30000); // Update every 30 seconds
+    const interval = setInterval(fetchLeaderboardData, 15000); // Update every 15 seconds
     return () => clearInterval(interval);
   }, [timeFilter, selectedCategory]);
 
 
 const fetchLeaderboardData = async () => {
   try {
-    setLoading(true);
-    const response = await fetch(`http://localhost:5000/api/leaderboard?timeFilter=${timeFilter}&category=${selectedCategory}&userId=${user?.id}`, {
+    setIsLive(false);
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:5000';
+    const response = await fetch(`${BACKEND_URL}/api/leaderboard?timeFilter=${timeFilter}&category=${selectedCategory}&userId=${user?.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -89,14 +92,15 @@ const fetchLeaderboardData = async () => {
       setLeaderboardData(data.leaderboard || []);
       setCurrentUserRank(data.currentUserRank);
       
-      // ✅ SAFE STATS SETTING with fallbacks
       setStats({
-        totalUsers: data.stats?.totalUsers || 0,
-        averagePoints: data.stats?.averagePoints || 0,
-        topStreakUser: data.stats?.topStreakUser || 'N/A',
-        mostActiveDay: data.stats?.mostActiveDay || 'Monday'
+        totalUsers: data.stats?.totalUsers || data.stats?.total_users || 0,
+        averagePoints: data.stats?.averagePoints || data.stats?.average_points || 0,
+        topStreakUser: data.stats?.topStreakUser || data.stats?.top_streak_user || 'N/A',
+        mostActiveDay: data.stats?.mostActiveDay || data.stats?.most_active_day || 'Monday'
       });
       
+      setLastUpdated(new Date());
+      setIsLive(true);
       console.log('✅ Leaderboard data loaded successfully');
     } else {
       throw new Error(data.message || 'Failed to load leaderboard');
@@ -104,7 +108,6 @@ const fetchLeaderboardData = async () => {
   } catch (error) {
     console.error('❌ Error fetching leaderboard:', error);
     
-    // ✅ SET FALLBACK DATA on error
     setLeaderboardData([]);
     setCurrentUserRank(null);
     setStats({
@@ -113,9 +116,7 @@ const fetchLeaderboardData = async () => {
       topStreakUser: 'N/A',
       mostActiveDay: 'N/A'
     });
-    
-    // Show user-friendly error message (if you have toast)
-    // toast.error('Unable to load leaderboard. Please try again.');
+    setIsLive(false);
   } finally {
     setLoading(false);
   }
@@ -164,6 +165,15 @@ const fetchLeaderboardData = async () => {
           <p className="text-gray-400 text-lg">
             🚀 Compete, Learn, and Level Up with Fellow Learners!
           </p>
+          {/* Live indicator */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span className={`inline-block w-2 h-2 rounded-full ${isLive ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`} />
+            <span className="text-sm text-gray-400">
+              {isLive ? (
+                <>Live · refreshes every 15s{lastUpdated && <> · Updated {lastUpdated.toLocaleTimeString()}</>}</>
+              ) : 'Connecting...'}
+            </span>
+          </div>
         </motion.div>
 
         {/* Stats Cards */}
