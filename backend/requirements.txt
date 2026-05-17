@@ -123,3 +123,5 @@ git+https://github.com/openai/whisper.git
 gunicorn==21.2.0
 gTTS==2.5.1
 SQLAlchemy==2.0.29
+google-generativeai==0.5.2
+httpx==0.27.2
