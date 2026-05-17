@@ -14,11 +14,7 @@ import {
 } from "@clerk/nextjs";
 import { Menu, X, Sparkles, BookOpen, Trophy } from "lucide-react";
 
-type NavbarProps = {
-  loggedIn: boolean;
-};
-
-export default function Navbar({ loggedIn }: NavbarProps) {
+export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
