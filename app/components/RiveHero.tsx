@@ -57,7 +57,11 @@ export default function RiveHero() {
 
   useEffect(() => {
     if (rive) {
-      prefersReducedMotion ? rive.pause() : rive.play();
+      if (prefersReducedMotion) {
+        rive.pause();
+      } else {
+        rive.play();
+      }
     }
   }, [rive, prefersReducedMotion]);
 
