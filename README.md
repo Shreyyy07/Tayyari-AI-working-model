@@ -1,229 +1,213 @@
-# Tayyari.ai
+---
 
-**Tayyari.ai** is an advanced, adaptive learning companion that transforms any educational content—PDFs, slides, notes, and videos—into interactive, personalized learning experiences. Harnessing state-of-the-art AI, Tayyari.ai enables learners to study smarter, not harder, with instant content conversion, AI-driven quizzes, adaptive learning paths, and rich multimodal accessibility.
+<div align="center">
+
+*Transform any content into interactive, personalized learning experiences with AI*
+
+[![GitHub Stars](https://img.shields.io/github/stars/Shreyyy07/Tayyari-AI-working-model?style=social)](https://github.com/Shreyyy07/Tayyari-AI-working-model)
+[![GitHub Forks](https://img.shields.io/github/forks/Shreyyy07/Tayyari-AI-working-model?style=social)](https://github.com/Shreyyy07/Tayyari-AI-working-model/fork)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+
+[Features](#-features) • [Architecture](#-system-architecture) • [Technologies](#-technologies-used) • [Roadmap](#-roadmap)
+
+</div>
 
 ---
 
-## 🎯 Vision
+## 📖 About Tayyari.ai
+**Tayyari.ai** is an advanced AI-driven educational platform designed to completely revolutionize how students and professionals learn. Instead of passively reading textbooks or watching videos, Tayyari allows you to upload any content and instantly transforms it into a highly interactive, personalized, and gamified learning experience.
 
-Tayyari.ai aims to democratize high-quality, personalized education by making it accessible, interactive, and effective for everyone.  
-Whether you're self-studying, preparing for exams, or exploring new topics, Tayyari.ai adapts to your pace, style, and goals—empowering you to learn **anything, your way**.
+Whether you need quick summaries, deep-dive explanations, interactive flashcards, or voice-based learning, Tayyari's suite of AI agents adapts entirely to your unique learning style.
+
+<div align="center">
+  <img src="./public/gifs/gg1.gif" alt="Tayyari.ai Landing Page Demo" />
+</div>
 
 ---
 
 ## 🏗️ System Architecture
-
 ```mermaid
 graph TD
-    A[UI - Next.js] --> B[Backend API - Flask]
-    A --> G[Uploadcare]
-    B --> C[AI/NLP Engine]
-    B --> D[RAG - LangChain]
-    B --> E[TTS / STT]
-    B --> F[Image Search]
-    C --> D
-    D --> C
-    B --> H[Analytics Engine]
-    C --> I[OpenAI / Gemini]
-    D --> J[HuggingFace]
-    E --> K[Whisper / TTS]
-    F --> L[Image APIs]
-    H --> M[User Progress]
-```
+    %% Main Application Layer
+    User[User / Student] -->|HTTP / WebSocket| VercelFrontend
+    
+    subgraph "Vercel Cloud (Frontend)"
+        VercelFrontend[Next.js 15 App]
+        UI[Interactive UI & Animations]
+        Auth[Clerk Authentication]
+        VercelFrontend --- UI
+        VercelFrontend --- Auth
+    end
+    
+    %% Communication
+    VercelFrontend <-->|REST API / JSON| HFBackend
+    
+    subgraph "Hugging Face Spaces (Backend Docker)"
+        HFBackend[Flask API Server]
+        
+        %% Sub-Modules
+        subgraph "AI & ML Processing Agents"
+            Gemini[Google Gemini API]
+            Whisper[OpenAI Whisper]
+            Langchain[Langchain & PDF Processing]
+            TTS[gTTS / Kokoro]
+        end
+        
+        %% Connections
+        HFBackend -->|Context & Prompts| Gemini
+        HFBackend -->|Audio Data| Whisper
+        HFBackend -->|Documents| Langchain
+        HFBackend -->|Text Output| TTS
+        
+        %% Output flow
+        Gemini -->|Dynamic Insights & Tutoring| HFBackend
+        Whisper -->|Transcripts| HFBackend
+        Langchain -->|Vectorized Knowledge| HFBackend
+        TTS -->|Audio Feedback| HFBackend
+        
+        %% Storage
+        Databases[(SQLite / Gamification & Leaderboard)]
+        HFBackend <--> Databases
+    end
 
-- **A:** User interacts with Tayyari.ai via a modern Next.js frontend (chat, upload, quizzes).
-- **B:** All requests are processed by a Python Flask backend API.
-- **G:** Uploadcare is used for secure file uploads.
-- **C:** AI/NLP engine processes user input, generates summaries, flashcards, and quizzes.
-- **D:** Retrieval-Augmented Generation (RAG) module (LangChain) fetches context from your notes and external sources.
-- **E:** Text-to-Speech and Speech-to-Text modules provide multimodal accessibility.
-- **F:** Real-world images are fetched from Unsplash/Bing based on learning topics.
-- **H:** Analytics engine tracks progress and learning metrics.
-- **I/J/K/L/M:** External AI/ML APIs and services for advanced capabilities.
+    classDef frontend fill:#000,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef backend fill:#ffd21e,stroke:#333,stroke-width:2px,color:#000;
+    classDef ml fill:#e0f7fa,stroke:#006064,stroke-width:1px,color:#000;
+    classDef storage fill:#fff3e0,stroke:#e65100,stroke-width:1px,color:#000;
+
+    class VercelFrontend frontend;
+    class HFBackend backend;
+    class Whisper,Langchain,TTS,Gemini ml;
+    class Databases storage;
+```
 
 ---
 
 ## ✨ Features
 
-- **📂 Upload & Convert Resources**  
-  Upload PDFs, PowerPoint slides, or videos and instantly convert them into structured, interactive study modules.
+#### **1. Multi-Agent AI Tutoring**
+- **Dynamic Content Analysis:** Upload PDFs or text and let the AI instantly understand the context.
+- **Specialized Agents:** Switch seamlessly between agents designed for Deep Dives, Flashcards, Summarization, and Q&A.
+- **Audio Learning:** Built-in Speech-to-Text (Whisper) and Text-to-Speech (gTTS) for hands-free, conversational learning.
 
-- **🧠 AI-Powered Concept Understanding**  
-  AI analyzes your uploaded content, extracts key concepts, and generates concise summaries, visual diagrams, and knowledge maps.
+#### **2. Gamification & Progression**
+- **Points System:** Earn XP and points for every interaction, question answered, and module completed.
+- **Global Leaderboard:** Compete with other learners globally in real-time.
+- **Achievement Tracking:** Visual progression that keeps you motivated to learn more every day.
 
-- **📑 Automated Summaries & Flashcards**  
-  Get clear, concise summaries and AI-generated flashcards for fast review and spaced repetition.
+<div align="center">
+  <img src="./public/gifs/gg2.gif" alt="Tayyari.ai Leaderboard & Gamification Demo" />
+</div>
 
-- **✍️ Interactive Quizzes**  
-  Reinforce your understanding with context-aware, AI-generated quizzes—each with explanations, diagrams, and real-world images.
-
-- **🎯 Adaptive Learning Paths**  
-  Tayyari.ai dynamically adjusts content difficulty and presentation based on your quiz performance and feedback, ensuring a personalized learning curve.
-
-- **🔎 Retrieval-Augmented Generation (RAG)**  
-  Combines your uploaded content with trusted external sources for accurate, contextual answers and explanations.
-
-- **🎮 Gamification & Progress Tracking**  
-  Earn achievements, badges, and see detailed analytics of your learning journey.
-
-- **🖼️ Real-world Visuals & Diagrams**  
-  For every concept, Tayyari.ai provides both AI-generated diagrams and relevant real-world images pulled from trusted sources (e.g., Unsplash, Bing) for richer understanding.
-
-- **🎙️ Multimodal AI Accessibility**  
-  - **Text-to-Speech:** Listen to notes, summaries, and answers.
-  - **Speech-to-Text:** Speak your questions or notes directly.
-  - **Multimodal chat:** Text, voice, and file-based interactions.
-
-- **🤖 Information Integrity & Decision Support**  
-  Mitigates misinformation and provides context-aware, reliable insights for research and learning.
-
-- **🧩 Seamless User Experience**  
-  Consistent, modern UI/UX with beautiful gradients and glassmorphism, matching the landing and chat pages for a cohesive experience.
+#### **3. Stunning, Accessible UI**
+- **Rive Animations:** High-performance, interactive vector animations that respond to user input.
+- **Responsive Design:** Beautifully crafted with Tailwind CSS and Framer Motion for a fluid experience on any device.
+- **Secure Authentication:** Seamless and secure onboarding powered by Clerk.
 
 ---
 
-## 🛠️ Tech Stack
+## 💻 Tech Stack
 
-- **Frontend:**  
-  - React (Next.js)
-  - Framer Motion (animations)
-  - Tailwind CSS (styling)
-  - React Markdown + KaTeX (math rendering)
-  - Uploadcare (file uploads)
+### Frontend Stack (Vercel)
+| Technology | Purpose |
+|------------|---------|
+| **Next.js 15** | React framework with Server Components and App Router |
+| **TypeScript** | Type-safe JavaScript development |
+| **Tailwind CSS** | Utility-first styling framework |
+| **Framer Motion & Rive** | Smooth animations and interactive graphics |
+| **Clerk** | Secure user authentication and management |
 
-- **Backend:**  
-  - Python (Flask)
-  - LangChain (document parsing, RAG)
-  - PDF/Text/Video parsing modules
-  - HuggingFace transformers (NLP)
-
-- **AI & NLP:**  
-  - OpenAI (GPT models via GitHub API)
-  - Gemini API (Google AI)
-  - Custom Retrieval-Augmented Generation (RAG) pipeline
-  - Whisper (Speech-to-Text)
-  - Deep Learning Text-to-Speech (TTS)
-
-- **Integrations:**  
-  - Unsplash/Bing for real-world images
-  - Sonner (notifications)
-  - GitHub Copilot (coding assistance)
+### Backend Stack (Hugging Face Spaces)
+| Technology | Purpose |
+|------------|---------|
+| **Flask** | High-performance Python web framework for API |
+| **SQLAlchemy** | ORM for managing Leaderboard and Gamification SQLite databases |
+| **Gunicorn** | Production WSGI server containerized via Docker |
+| **Google Gemini API** | Core LLM engine powering the intelligent tutoring agents |
+| **Langchain & PyPDF** | Document ingestion, parsing, and context retrieval |
+| **OpenAI Whisper** | Accurate audio transcription for voice inputs |
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. **Clone the repository**
-```bash
-git clone https://github.com/<your-username>/tayyari-ai.git
-cd tayari-ai
-```
+### Prerequisites
+- Node.js (v18+)
+- Python 3.11+
+- Clerk API Keys
+- Google Gemini API Key
 
-### 2. **Install dependencies**
+### Installation
 
-- **Frontend:**
-  ```bash
-  cd app
-  npm install
-  ```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Shreyyy07/Tayyari-AI-working-model.git
+   cd Tayyari-AI-working-model
+   ```
 
-- **Backend:**
-  ```bash
-  cd backend
-  pip install -r requirements.txt
-  ```
+2. **Setup Frontend**
+   ```bash
+   npm install
+   # Create a .env.local file with your Clerk keys and backend URL
+   npm run dev
+   ```
 
-### 3. **Set up environment variables**
-
-- Frontend (`.env.local`):
-  ```
-  NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY=your_uploadcare_public_key
-  NEXT_PUBLIC_BING_IMAGE_SEARCH_KEY=your_bing_key # If using Bing
-  ```
-
-- Backend (`.env`):
-  ```
-  GEMINI_API_KEY=your_gemini_api_key
-  GITHUB_TOKEN=your_github_openai_token
-  ```
-
-### 4. **Run the app**
-
-- **Backend:**
-  ```bash
-  cd backend
-  python app.py
-  ```
-
-- **Frontend:**
-  ```bash
-  cd app
-  npm run dev
-  ```
+3. **Setup Backend**
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   # Create a .env file with your Gemini API key
+   python app.py
+   ```
 
 ---
 
-## 📚 Usage Guide
-
-1. **Upload** your notes, PDFs, slides, or videos.
-2. **Add notes or questions** in natural language—text or voice.
-3. **Explore**: Instantly receive summaries, quizzes, and diagrams.
-4. **Take interactive quizzes** with real-world images and explanations.
-5. **Track your progress** and revisit past conversations via the Recent Learning section.
-
----
-
-## 🖼️ Visuals & Multimodal Learning
-
-- Every chat response includes:
-  - A big, bold heading with an AI-generated diagram.
-  - A real-world image relevant to the topic (via Unsplash/Bing).
-  - Concise bullet-point explanations.
-  - Interactive "Learn More" and "Take Quiz" actions.
+## 📈 Roadmap
+- [x] Cloud Split-Stack Deployment (Vercel + Hugging Face)
+- [x] Multi-Agent Architecture Integration
+- [x] Live Global Leaderboard & Points System
+- [ ] **Vector Database Integration** - Pinecone/ChromaDB for massive document support
+- [ ] **Mobile Application** - iOS and Android native apps
+- [ ] **Collaborative Study Rooms** - Real-time multiplayer learning sessions
+- [ ] **Video Generation** - AI-generated video summaries of notes
 
 ---
 
-## 🗂 Project Structure
-
-```
-/
-├── app/                # Next.js frontend (chat, upload, landing, etc.)
-├── backend/            # Flask backend (AI, RAG, TTS, STT)
-├── public/             # Static assets
-├── README.md
-└── ...
-```
+## 🔐 Security & Privacy
+- **Secure Processing**: ML models and heavy processing isolated securely in Hugging Face Docker containers.
+- **Auth Management**: Enterprise-grade security handled entirely by Clerk.
+- **API Security**: Environment variables and secure CORS policies strictly enforced.
 
 ---
 
-## 🚦 Roadmap
+## 🤝 Contributing
+We welcome contributions! Here's how:
 
-- 🌎 **Multilingual Support** — Learn in your language of choice.
-- 🤝 **Collaborative Learning** — Group study sessions and shared workspaces.
-- 🎨 **UI Customization** — Personalize themes, layouts, and interaction modes.
-- 🕵️ **Advanced Research Tools** — Deeper document/contextual analysis.
-- 📊 **Analytics & Insights** — Detailed learning analytics and recommendations.
-
----
-
-## 🖥️ Demo Video
-
-[Watch the demo](https://drive.google.com/file/d/1UFxwsn_B1ucXtvMGAMOtNFW0qk1Lr0NM/view?usp=drive_link)
-
----
-
-## 🙏 Contributing
-
-Pull requests are welcome!  
-If you have suggestions for new features, improvements, or bug fixes, please open an issue or submit a PR.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Tayyari.ai** — Learn anything. Your way.  
-Smarter, faster, more interactive learning for everyone.
+## 👥 Author
+- **Shreyyy07** - [GitHub Profile](https://github.com/Shreyyy07)
+
+---
+
+<div align="center">
+
+**⭐ Star this repository if you find it helpful!**
+
+Made with ❤️ by Shreyyy07
+
+</div>
