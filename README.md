@@ -1,4 +1,8 @@
----
+<div align="center">
+  
+# Tayyari.ai
+
+</div>
 
 <div align="center">
 
