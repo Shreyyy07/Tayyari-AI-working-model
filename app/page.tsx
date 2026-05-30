@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import RiveHero from '@/app/components/RiveHero'
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, ReactNode } from 'react'
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { 
   BookOpen, 
@@ -32,7 +32,7 @@ import {
 } from 'lucide-react'
 
 // Custom Badge Component
-const Badge = ({ children, variant = "default", className = "" }) => {
+const Badge = ({ children, variant = "default", className = "" }: { children: ReactNode, variant?: "default" | "secondary" | "outline" | "destructive", className?: string }) => {
   const variants = {
     default: "bg-blue-600 text-white",
     secondary: "bg-purple-600 text-white",
@@ -48,7 +48,7 @@ const Badge = ({ children, variant = "default", className = "" }) => {
 };
 
 // Custom Progress Component
-const Progress = ({ value, className = "" }) => {
+const Progress = ({ value, className = "" }: { value: number, className?: string }) => {
   return (
     <div className={`w-full bg-gray-700 rounded-full h-2 ${className}`}>
       <motion.div 
@@ -165,7 +165,7 @@ const Navbar = () => {
 };
 
 // Animated Feature Card Component
-const AnimatedFeatureCard = ({ icon: Icon, title, description, color, delay = 0, index, actionButtons }) => {
+const AnimatedFeatureCard = ({ icon: Icon, title, description, color, delay = 0, index, actionButtons }: { icon: any, title: string, description: string, color: string, delay?: number, index: number, actionButtons?: ReactNode }) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-100px" });
   const [isHovered, setIsHovered] = useState(false);
@@ -270,7 +270,7 @@ const AnimatedFeatureCard = ({ icon: Icon, title, description, color, delay = 0,
 };
 
 // Achievement Badge Component
-const AchievementBadge = ({ icon: Icon, title, earned = false, delay = 0 }) => {
+const AchievementBadge = ({ icon: Icon, title, earned = false, delay = 0 }: { icon: any, title: string, earned?: boolean, delay?: number }) => {
   return (
     <motion.div
       initial={{ scale: 0, rotate: -180 }}
@@ -318,7 +318,7 @@ export default function HomePage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
